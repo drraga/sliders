@@ -1,19 +1,22 @@
-let touchStartX = 0;
+let touchStartX = 0; // начало свайпа
 
 // singleSlider
 const singleSliderLine = document.querySelector('.single-slider__line');
 const singleSliderSlides = document.querySelectorAll('.single-slider__slide');
+const wrapper = document.querySelector('.single-slider__wrapper');
+const totalSlides = document.querySelectorAll('.single-slider__slide').length; // кол-во слайдов
 const prevButton = document.querySelector('.prev');
 const nextButton = document.querySelector('.next');
-let sliderSingleCurrentIndex = 0;
+const slideWidth = singleSliderSlides[0].clientWidth; // ширина слайда
+let sliderSingleCurrentIndex = 0; // индекс текущего слайда
 
 // multipleSlider
 const multipleSliderLine = document.querySelector('.multiple-slider__line');
 const multipleSliderSlides = document.querySelectorAll('.multiple-slider__slide');
 let multipleSliderLineIndex = 1;
-
+  
 // обработчик свайпа для одного слайдера
-function handleSingleSliderSwipe(event) {
+const handleSingleSliderSwipe = (event) => {
     const touchEndX = event.changedTouches[0].clientX;
     const deltaX = touchEndX - touchStartX;
 
@@ -23,12 +26,12 @@ function handleSingleSliderSwipe(event) {
         } else {
             sliderSingleCurrentIndex = (sliderSingleCurrentIndex + 1) % singleSliderSlides.length;
         }
-        drawSingleSlider();
+        updateSliderPosition();
     } 
 }
 
 // обработчик свайпа для множественных слайдов
-function handleMultipleSliderSwipe(event) {
+const handleMultipleSliderSwipe = (event) => {
     const touchEndX = event.changedTouches[0].clientX;
     const deltaX = touchEndX - touchStartX;
     
@@ -43,37 +46,24 @@ function handleMultipleSliderSwipe(event) {
 }
 
 // настройка обработчиков событий для слайдера с одним салйдом
-function setupSingleSlider() {    
-    singleSliderLine.addEventListener('touchstart', (event) => {
-        touchStartX = event.touches[0].clientX;
-    });
+const setupSingleSlider = () => {    
+    const screenWidth = window.innerWidth;
 
-    singleSliderLine.addEventListener('touchmove', (event) => {
-        event.preventDefault();
-    });
-
-    singleSliderLine.addEventListener('touchend', handleSingleSliderSwipe);
-
-    if (window.innerWidth <= 1024) { // отключаем свайп, включается инерционный скролл
-        singleSliderLine.removeEventListener('touchstart', handleTouchStart);
-        singleSliderLine.removeEventListener('touchmove', handleTouchMove);
-        singleSliderLine.removeEventListener('touchend', handleTouchEnd); 
+    if(screenWidth >= 800 && screenWidth <= 1440) { // задаем диапазон в котором будет работать свайп
+        singleSliderLine.addEventListener('touchstart', (event) => {
+            touchStartX = event.touches[0].clientX;
+        });
+    
+        singleSliderLine.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+        });
+    
+        singleSliderLine.addEventListener('touchend', handleSingleSliderSwipe);
     }
 }
 
-function goNextSlide() {
-    sliderSingleCurrentIndex = (sliderSingleCurrentIndex + 1) % singleSliderSlides.length;
-    drawSingleSlider();
-}
-
-function goPrevSlide() {
-    sliderSingleCurrentIndex = (sliderSingleCurrentIndex - 1 + singleSliderSlides.length) % singleSliderSlides.length;
-    drawSingleSlider();
-}
-
-
 // настройка обработчиков событий для множественных слайдов
-function setupMultipleSlider() {
+const setupMultipleSlider = () => {
     multipleSliderLine.addEventListener('touchstart', (event) => {
         touchStartX = event.touches[0].clientX;
     });
@@ -85,38 +75,37 @@ function setupMultipleSlider() {
     multipleSliderLine.addEventListener('touchend', handleMultipleSliderSwipe);
 }
 
-// отрисовка слайдера с одним слайдом
-function drawSingleSlider() {
-    const newPosition = -sliderSingleCurrentIndex * singleSliderSlides[sliderSingleCurrentIndex]?.offsetWidth;
-    singleSliderLine.style.transform = `translateX(${newPosition}px)`;
-}
-
 // отрисовка слайдера с множественными слайдами
-function drawMultipleSlider() {
+const drawMultipleSlider = () => {
     const newPosition = -multipleSliderLineIndex * multipleSliderSlides[multipleSliderLineIndex]?.offsetWidth + multipleSliderSlides[multipleSliderLineIndex]?.offsetWidth / 2;
     multipleSliderLine.style.transform = `translateX(${newPosition}px)`;
 }
 
 // инициализация обоих слайдеров
-function initializeSliders() {
+const initializeSliders = () => {
     setupSingleSlider();
     setupMultipleSlider();
     drawMultipleSlider();
 }
 
-document.addEventListener('DOMContentLoaded', initializeSliders);
-prevButton.addEventListener('click', goPrevSlide);
-nextButton.addEventListener('click', goNextSlide);
+nextButton.addEventListener('click', function() { // обработчик на кнопку вперед
+    sliderSingleCurrentIndex = (sliderSingleCurrentIndex + 1) % totalSlides; // расчет текущего индекса
+    updateSliderPosition();
+});
 
+prevButton.addEventListener('click', function() { // обработчик на кнопку назад
+    sliderSingleCurrentIndex = (sliderSingleCurrentIndex - 1 + totalSlides) % totalSlides; // расчет текущего индекса
+    updateSliderPosition();
+});
 
-// function handleWindowResize() {
-//     if (window.innerWidth <= 1024) {
-//         console.log('Ширина окна меньше или равна 1024 пикселей.');
-//     } else {
-//         console.log('Ширина окна больше 1024 пикселей.');
-//     }
-// }
+const updateSliderPosition = () => { // ф-ия отрисовки слайдера
+    const newPosition = sliderSingleCurrentIndex * slideWidth; // 
+    wrapper.scrollTo({
+        left: newPosition,
+        behavior: 'smooth'
+    });
+}
 
-// Добавляем слушатель события resize
+document.addEventListener('DOMContentLoaded', initializeSliders); // инициализируем
+
 window.addEventListener('resize', setupSingleSlider);
-

@@ -24,11 +24,12 @@ h1 {
 
 .single-slider__wrapper {
   overflow: hidden;
-  overflow-x: auto;
+  /* overflow-x: auto; */
   padding: 0 0 20px;
   margin: 0 0 -20px;
   width: 50vw;
   color: #02bbdf;
+  transition: scroll-left 0.3s ease-in-out;
 }
 
 @media screen and (max-width: 1024px) {
@@ -42,6 +43,7 @@ h1 {
   font-size: 0;
   white-space: nowrap;
   transition: transform 1s ease;
+  transition: scroll-left 0.3s ease-in-out;
 }
 
 .single-slider__slide {
@@ -50,6 +52,7 @@ h1 {
   height: 200px;
   transition: transform 1s ease;
   white-space: nowrap;
+  transition: scroll-left 0.3s ease-in-out;
 }
 
 .single-slider__slide p {
