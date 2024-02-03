@@ -42,17 +42,17 @@ h1 {
   width: 100%;
   font-size: 0;
   white-space: nowrap;
-  transition: transform 1s ease;
-  transition: scroll-left 0.3s ease-in-out;
+  /* transition: transform 1s ease; */
+  transition: scroll-left 0.3s ease-in-out, transform 1s ease;
 }
 
 .single-slider__slide {
   display: inline-block;
   width: 50vw;
   height: 200px;
-  transition: transform 1s ease;
+  /* transition: transform 1s ease; */
   white-space: nowrap;
-  transition: scroll-left 0.3s ease-in-out;
+  transition: scroll-left 0.3s ease-in-out, transform 1s ease;
 }
 
 .single-slider__slide p {
@@ -107,3 +107,12 @@ h1 {
   width: 25vw;
   margin: 0 0 5px;
 }
+
+
+
+  @media screen and (max-width: 767px) {
+    .prev, .next {
+      opacity: 0;
+      pointer-events: none;
+    } 
+  }
