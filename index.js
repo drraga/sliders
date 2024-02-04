@@ -57,7 +57,6 @@ const updateSliderTranslate = () => {
 // слайдер с одним слайдом. отрисовка при свайпе
 const updateSliderPosition = () => {
     const sigleSlideWidthOfElement = document.getElementsByClassName('single-slider__slide')[0].offsetWidth // лайв коллекция элементов
-    console.log('отработала ф-ия свайпа', sigleSlideWidthOfElement);
     const newPosition = sliderSingleCurrentIndex * sigleSlideWidthOfElement; // 
     wrapper.scrollTo({
         left: newPosition,
@@ -122,9 +121,9 @@ document.addEventListener('DOMContentLoaded', initializeSliders); // иници�
 
 // слушатель для resize window
 window.addEventListener('resize', () => {
-    sliderSingleCurrentIndex = 0; // сбрасываем индекс
-    setTimeout(()=> { // используем, чтобы отрисовка произошла после окончания resize
-        updateSliderPosition(); // возвращаем в изначальное положение скролл
-        updateSliderTranslate(); // возвращаем в изначальное положение translate
-    }, 1500) // 1,5  секунды на выполнение resize
+    sliderSingleCurrentIndex = 0; // обновляем индекс слайдера 
+    requestAnimationFrame(() => { 
+        updateSliderPosition();  // установим слайдеры в изначальную позицию
+        updateSliderTranslate();
+      });
 });
